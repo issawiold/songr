@@ -1,8 +1,15 @@
 package com.example.songr.controller;
 
+import com.example.songr.models.AlbumsTable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.servlet.view.RedirectView;
+
+
+import java.util.List;
 
 @Controller
 public class AlbumController {
@@ -28,5 +35,27 @@ public class AlbumController {
         model.addAttribute("imgUrl3",album3.getImageUrl());
         return "album.html";
     }
+    @Autowired
+    AlbumTableRepository albumTableRepository;
+    @GetMapping("/allalbums")
+    public String getAllAlbumsStores(Model m)
+    {
+        List<AlbumsTable> albumTableWare = albumTableRepository.findAll();
+        m.addAttribute("albumTables", albumTableWare);
+
+
+        return "album.html";
+    }
+
+    @PostMapping("/create-album")
+    public RedirectView createAlbum(String title, String artist, int songCount, int length, String imageUrl)
+    {
+        AlbumsTable newAlbum = new AlbumsTable( title,  artist,  songCount,  length, imageUrl);
+        albumTableRepository.save(newAlbum);
+
+        return new RedirectView("/albums");
+    }
+
+
 
 }
